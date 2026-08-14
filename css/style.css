@@ -928,3 +928,40 @@ img {
     .floating-card.card-2 { right: 0; }
     .footer-grid { grid-template-columns: 1fr; }
 }
+
+
+/* Main Container */
+.container {
+  width: 100%;
+  max-width: 1200px; /* Maksimal lebar di laptop */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;  /* 16px padding di HP */
+  padding-right: 1rem;
+}
+
+/* Responsive Grid System (Mobile: 1 kolom, Tablet: 2 kolom, Laptop: 3-4 kolom) */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr; /* Default Mobile: 1 Kolom */
+  gap: 1.25rem; /* Jarak antar kartu/elemen */
+}
+
+/* Tablet (min-width: 768px) */
+@media (min-width: 768px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  .grid-layout {
+    grid-template-columns: repeat(2, 1fr); /* 2 Kolom di Tablet */
+  }
+}
+
+/* Laptop / Desktop (min-width: 1024px) */
+@media (min-width: 1024px) {
+  .grid-layout {
+    grid-template-columns: repeat(3, 1fr); /* 3 Kolom di Laptop */
+  }
+}
