@@ -3,6 +3,30 @@
    ========================================================================== */
 
 /* --- Root Variables --- */
+/* Reset Margin & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hindari Scroll Horizontal Unwanted */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+/* Gambar & Media Responsif */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
 :root {
     --primary-color: #0f4c81;       /* Deep Navy Professional */
     --primary-dark: #0a3357;
