@@ -1,20 +1,19 @@
-/* ==========================================================================
-   CV SRI REJEKI BERSAUDARA - JAVASCRIPT
-   ========================================================================== */
+// ==========================================================================
+// CV SRI REJEKI BERSAUDARA - JAVASCRIPT
+// Fungsi Interaktif & Pengiriman Formulir ke WhatsApp
+// ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. Mobile Menu Toggle ---
+    // 1. Menu Navigasi Mobile (Hamburger Toggle)
     const navToggle = document.getElementById('navToggle');
     const navMenu = document.getElementById('navMenu');
-    const navLinks = document.querySelectorAll('.nav-link');
 
     if (navToggle && navMenu) {
         navToggle.addEventListener('click', () => {
             navMenu.classList.toggle('active');
-            
             const icon = navToggle.querySelector('i');
-            if (icon.classList.contains('fa-bars')) {
+            if (navMenu.classList.contains('active')) {
                 icon.classList.remove('fa-bars');
                 icon.classList.add('fa-xmark');
             } else {
@@ -23,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Close menu when clicking link
-        navLinks.forEach(link => {
+        // Tutup menu saat tautan diklik
+        document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
                 const icon = navToggle.querySelector('i');
@@ -36,9 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. Sticky Navbar & Back to Top Button ---
+    // 2. Efek Scroll Navbar & Tombol Back to Top
     const navbar = document.getElementById('navbar');
-    const backToTopBtn = document.getElementById('backToTop');
+    const backToTop = document.getElementById('backToTop');
 
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -47,91 +46,106 @@ document.addEventListener('DOMContentLoaded', () => {
             navbar.classList.remove('scrolled');
         }
 
-        if (window.scrollY > 400) {
-            backToTopBtn.classList.add('show');
-        } else {
-            backToTopBtn.classList.remove('show');
+        if (backToTop) {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
         }
+
+        highlightNavOnScroll();
     });
 
-    // --- 3. Active Link Switching on Scroll ---
-    const sections = document.querySelectorAll('section');
+    // 3. Highlight Otomatis Menu Navigasi Sesuai Posisi Scroll
+    const sections = document.querySelectorAll('section[id]');
+    
+    function highlightNavOnScroll() {
+        const scrollY = window.pageYOffset;
 
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            if (window.pageYOffset >= (sectionTop - 150)) {
-                current = section.getAttribute('id');
+        sections.forEach(current => {
+            const sectionHeight = current.offsetHeight;
+            const sectionTop = current.offsetTop - 100;
+            const sectionId = current.getAttribute('id');
+            const navItem = document.querySelector(`.nav-menu a[href*=${sectionId}]`);
+
+            if (navItem) {
+                if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                    navItem.classList.add('active');
+                } else {
+                    navItem.classList.remove('active');
+                }
             }
         });
+    }
 
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('active');
-            }
-        });
-    });
-
-    // --- 4. Number Counter Animation for Hero Stats ---
+    // 4. Animasi Angka Statistik (Hero Section Counter)
     const statNumbers = document.querySelectorAll('.stat-number');
     let animated = false;
 
-    function startCounterAnimation() {
-        statNumbers.forEach(counter => {
-            const target = +counter.getAttribute('data-target');
-            const duration = 2000;
-            const increment = target / (duration / 16);
+    function startCounters() {
+        const heroSection = document.querySelector('.hero');
+        if (!heroSection) return;
 
-            let currentCount = 0;
-            const updateCount = () => {
-                currentCount += increment;
-                if (currentCount < target) {
-                    counter.innerText = Math.ceil(currentCount);
-                    requestAnimationFrame(updateCount);
-                } else {
-                    counter.innerText = target;
-                }
-            };
-            updateCount();
-        });
+        const heroPosition = heroSection.getBoundingClientRect().top;
+        const screenPosition = window.innerHeight;
+
+        if (heroPosition < screenPosition && !animated) {
+            statNumbers.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const speed = 200;
+
+                const updateCount = () => {
+                    const count = +counter.innerText;
+                    const inc = Math.ceil(target / speed);
+
+                    if (count < target) {
+                        counter.innerText = count + inc > target ? target : count + inc;
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+
+                updateCount();
+            });
+            animated = true;
+        }
     }
 
-    // Trigger animation when stats section enters viewport
-    const heroStatsSection = document.querySelector('.hero-stats');
-    if (heroStatsSection) {
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && !animated) {
-                startCounterAnimation();
-                animated = true;
-            }
-        }, { threshold: 0.5 });
+    window.addEventListener('scroll', startCounters);
+    startCounters();
 
-        observer.observe(heroStatsSection);
-    }
-
-    // --- 5. Form Handling (Demo Submission) ---
+    // 5. Integrasi Formulir Minta Penawaran Langsung ke WhatsApp
     const quoteForm = document.getElementById('quoteForm');
+
     if (quoteForm) {
         quoteForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
             const category = document.getElementById('category').value;
-            const message = document.getElementById('message').value;
+            const message = document.getElementById('message').value.trim();
 
-            if (!name || !email || !phone || !category || !message) {
-                alert('Mohon lengkapi semua kolom formulir.');
-                return;
-            }
+            // Nomor Tujuan WhatsApp (CV Sri Rejeki Bersaudara)
+            const targetPhone = "6281234567890"; 
 
-            alert(`Terima kasih, ${name}!\n\nPesan dan permintaan penawaran Anda mengenai "${category}" telah berhasil dikirim. Tim CV Sri Rejeki Bersaudara akan segera menghubungi Anda melalui nomor ${phone} atau email.`);
+            // Format Pesan WhatsApp
+            const waMessage = `Halo CV Sri Rejeki Bersaudara, saya ingin mengajukan penawaran/informasi:%0A%0A` +
+                              `*Nama / Instansi:* ${encodeURIComponent(name)}%0A` +
+                              `*Email:* ${encodeURIComponent(email)}%0A` +
+                              `*No. WA:* ${encodeURIComponent(phone)}%0A` +
+                              `*Kategori Layanan:* ${encodeURIComponent(category)}%0A` +
+                              `*Rincian Kebutuhan:*%0A${encodeURIComponent(message)}`;
 
+            // Direct ke WhatsApp Web/App
+            const waUrl = `https://wa.me/${targetPhone}?text=${waMessage}`;
+            window.open(waUrl, '_blank');
+
+            // Reset Formulir
             quoteForm.reset();
         });
     }
-
 });
